@@ -6,33 +6,61 @@ import { getWordDefinition } from "../utils/getWordDefinition";
 export default function SummaryOutput({ summary }) {
   const [copied, setCopied] = useState(false);
   const [popup, setPopup] = useState(null);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
 
-  const handleWordClick = async (word) => {
+  const handleWordClick = async (word, event) => {
     const definition = await getWordDefinition(word);
+    const rect = event.target.getBoundingClientRect();
+    setPopupPosition({ x: rect.left, y: rect.bottom + window.scrollY });
     setPopup({ word, definition });
   };
 
-  const renderTextWithClickableWords = () => {
-    return summary.split(" ").map((word, index) => (
-      <span
-        key={index}
-        onClick={() => handleWordClick(word.replace(/[^\w]/g, ""))}
-        className="cursor-pointer hover:underline hover:text-purple-600"
-      >
-        {word}{" "}
-      </span>
-    ));
+  const renderTextWithClickableWords = () =>
+    summary.split(" ").map((word, index) => {
+      const cleaned = word.replace(/[^\w]/g, "");
+      return (
+        <span
+          key={index}
+          onClick={(e) => handleWordClick(cleaned, e)}
+          className="cursor-pointer inline-block hover:text-purple-600 hover:underline transition duration-150"
+        >
+          {word + " "}
+        </span>
+      );
+    });
+
+  const handleDownload = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(12);
+    doc.text(summary, 10, 10, { maxWidth: 180 });
+    doc.save("summary.pdf");
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(summary);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
   };
 
   return (
-    <div className="p-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded relative">
-      <h3 className="font-semibold mb-2 text-lg">📝 Summary</h3>
-      <p className="text-zinc-700 dark:text-zinc-100 whitespace-pre-wrap mb-4 leading-relaxed">
+    <div className="relative p-6 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow">
+      <h3 className="text-xl font-semibold text-purple-700 dark:text-purple-400 mb-4">
+        📝 Summary
+      </h3>
+
+      <p className="text-zinc-800 dark:text-zinc-100 leading-relaxed text-base whitespace-pre-wrap">
         {renderTextWithClickableWords()}
       </p>
 
+      {/* Dictionary Popup */}
       {popup && (
-        <div className="absolute top-10 left-10">
+        <div
+          className="absolute z-50"
+          style={{
+            top: popupPosition.y + 10,
+            left: popupPosition.x,
+          }}
+        >
           <DictionaryPopup
             word={popup.word}
             meaning={popup.definition}
@@ -41,24 +69,17 @@ export default function SummaryOutput({ summary }) {
         </div>
       )}
 
-      <div className="flex gap-4 justify-end">
+      {/* Action Buttons */}
+      <div className="mt-6 flex justify-end gap-4">
         <button
-          onClick={() => {
-            navigator.clipboard.writeText(summary);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
-          }}
-          className="text-sm text-purple-600 hover:underline"
+          onClick={handleCopy}
+          className="text-sm px-4 py-2 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-700 font-medium transition"
         >
           {copied ? "✅ Copied" : "📋 Copy"}
         </button>
         <button
-          onClick={() => {
-            const doc = new jsPDF();
-            doc.text(summary, 10, 10);
-            doc.save("summary.pdf");
-          }}
-          className="text-sm text-purple-600 hover:underline"
+          onClick={handleDownload}
+          className="text-sm px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium transition"
         >
           📄 Download PDF
         </button>
