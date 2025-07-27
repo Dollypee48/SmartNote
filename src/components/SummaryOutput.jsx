@@ -1,4 +1,12 @@
+import { useState, useRef } from "react";
+import DictionaryPopup from "./DictionaryPopup"; 
+
 export default function SummaryOutput({ summary, source, error }) {
+  const [copied, setCopied] = useState(false);
+  const [selectedWord, setSelectedWord] = useState(null);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const summaryRef = useRef();
+
   const getSourceInfo = () => {
     const sources = {
       sharpapi: {
@@ -39,38 +47,88 @@ export default function SummaryOutput({ summary, source, error }) {
 
   const sourceInfo = getSourceInfo();
 
-  return (
-    <section
-      className={`mt-6 max-w-3xl mx-auto rounded-lg shadow-md overflow-hidden border ${sourceInfo.colorBg} border-transparent`}
-      aria-label="Summary Output"
-    >
-      <header
-        className={`flex justify-between items-center px-6 py-3 border-b ${sourceInfo.colorBg}`}
+  const handleCopy = () => {
+    navigator.clipboard.writeText(summary || "").then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleWordClick = (e) => {
+    const word = e.target.textContent;
+    if (word) {
+      const rect = e.target.getBoundingClientRect();
+      setPopupPosition({ x: rect.left + window.scrollX, y: rect.bottom + window.scrollY });
+      setSelectedWord(word.replace(/[.,?!;()"']/g, ""));
+    }
+  };
+
+  const renderWords = () => {
+    if (!summary) return "No summary could be generated.";
+    return summary.split(" ").map((word, index) => (
+      <span
+        key={index}
+        onClick={handleWordClick}
+        className="cursor-pointer hover:underline hover:text-purple-600"
       >
-        <div>
-          <h3
-            className={`text-lg font-semibold tracking-wide ${sourceInfo.colorText}`}
-          >
-            {sourceInfo.name}
-          </h3>
-          {sourceInfo.description && (
-            <p className="text-xs opacity-70 mt-0.5">{sourceInfo.description}</p>
-          )}
-        </div>
+        {word}{" "}
+      </span>
+    ));
+  };
 
-        {error && (
-          <span
-            className={`inline-block px-3 py-1 text-xs font-semibold rounded-full shadow-sm select-none ${sourceInfo.badgeBg} ${sourceInfo.badgeText} whitespace-nowrap`}
-            title="Error details"
-          >
-            ⚠️ {error}
-          </span>
-        )}
-      </header>
+  return (
+    <>
+      <section
+        className={`mt-6 max-w-3xl mx-auto rounded-lg shadow-md overflow-hidden border ${sourceInfo.colorBg} border-transparent`}
+        aria-label="Summary Output"
+      >
+        <header
+          className={`flex justify-between items-center px-6 py-3 border-b ${sourceInfo.colorBg}`}
+        >
+          <div>
+            <h3 className={`text-lg font-semibold tracking-wide ${sourceInfo.colorText}`}>
+              {sourceInfo.name}
+            </h3>
+            {sourceInfo.description && (
+              <p className="text-xs opacity-70 mt-0.5">{sourceInfo.description}</p>
+            )}
+          </div>
 
-      <article className="p-6 bg-white leading-relaxed text-gray-900 whitespace-pre-wrap text-base">
-        {summary || "No summary could be generated."}
-      </article>
-    </section>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopy}
+              className="text-sm px-3 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition"
+              title="Copy summary"
+            >
+              {copied ? "Copied!" : "Copy"}
+            </button>
+
+            {error && (
+              <span
+                className={`inline-block px-3 py-1 text-xs font-semibold rounded-full shadow-sm select-none ${sourceInfo.badgeBg} ${sourceInfo.badgeText} whitespace-nowrap`}
+                title="Error details"
+              >
+                ⚠️ {error}
+              </span>
+            )}
+          </div>
+        </header>
+
+        <article
+          ref={summaryRef}
+          className="p-6 bg-white leading-relaxed text-gray-900 whitespace-pre-wrap text-base"
+        >
+          {renderWords()}
+        </article>
+      </section>
+
+      {selectedWord && (
+        <DictionaryPopup
+          word={selectedWord}
+          position={popupPosition}
+          onClose={() => setSelectedWord(null)}
+        />
+      )}
+    </>
   );
 }

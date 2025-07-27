@@ -8,7 +8,7 @@ import About from './pages/About';
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen  bg-gray-800 flex flex-col">
         <Navbar />
         <main className="flex-grow container mx-auto px-4 py-8">
           <Routes>

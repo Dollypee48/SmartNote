@@ -13,11 +13,8 @@ export default function About() {
 
         <ul className="list-disc pl-6 my-6 space-y-2 text-zinc-700 dark:text-zinc-300">
           <li>📌 AI-generated summaries of any text</li>
-          <li>📚 Dictionary definitions on click</li>
           <li>💾 Auto-saved content (localStorage)</li>
-          <li>📄 Download summaries as PDF</li>
-          <li>🎯 Adjustable tone for more tailored output</li>
-          <li>🌙 Dark mode for night reading</li>
+          <li>📄 Copy summaries to clipboard</li>
         </ul>
 
         <p className="text-zinc-700 dark:text-zinc-300">
