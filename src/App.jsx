@@ -1,21 +1,24 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Summarizer from "./pages/Summarizer";
-import Header from "./components/Header";
-import About from "./pages/About";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import Summarize from './pages/Summarize';
+import About from './pages/About';
 
-
-function App() {
+export default function App() {
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/summarize" element={<Summarizer />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
-    </Router>
+    <BrowserRouter>
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow container mx-auto px-4 py-8">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/summarize" element={<Summarize />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
-
-export default App;

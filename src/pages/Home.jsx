@@ -1,35 +1,47 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-white dark:from-zinc-900 dark:to-zinc-950 px-6 py-16">
-      <div className="max-w-4xl mx-auto text-center">
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <span className="text-3xl">🧠</span>
-          <h1 className="text-3xl font-bold text-zinc-800 dark:text-white tracking-tight">
-            SmartNotes
-          </h1>
-        </div>
-
-        {/* Headline */}
-        <h2 className="text-4xl sm:text-5xl font-extrabold text-purple-700 dark:text-purple-400 mb-4 leading-tight">
-          Summarize Notes with AI
-        </h2>
-
-        {/* Subtext */}
-        <p className="text-lg sm:text-xl text-zinc-600 dark:text-zinc-300 mb-10">
-          Paste your notes and get intelligent summaries in seconds. Ideal for students, researchers, and busy minds.
-        </p>
-
-        {/* CTA Button */}
-        <Link
-          to="/summarize"
-          className="inline-block px-8 py-4 bg-purple-700 hover:bg-purple-800 text-white text-lg font-medium rounded-xl transition shadow-lg"
-        >
-          🚀 Get Started
-        </Link>
+    <div className="text-center py-12 px-4 max-w-3xl mx-auto">
+      <h1 className="text-4xl font-bold text-indigo-700 mb-6">Text Summarizer</h1>
+      <p className="text-xl text-gray-600 mb-8">
+        Quickly summarize any text with our AI-powered tool. Perfect for students, 
+        researchers, and professionals who need to process large amounts of text.
+      </p>
+      <Link 
+        to="/summarize" 
+        className="inline-block px-8 py-3 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 transition-colors"
+      >
+        Try Summarizer Now
+      </Link>
+      
+      <div className="mt-16 grid md:grid-cols-3 gap-8">
+        <FeatureCard 
+          title="Fast Processing" 
+          icon="⚡"
+          description="Get summaries in seconds with our optimized algorithms"
+        />
+        <FeatureCard 
+          title="Accurate Results" 
+          icon="🎯"
+          description="Key points extracted without losing meaning"
+        />
+        <FeatureCard 
+          title="Easy to Use" 
+          icon="✨"
+          description="Simple interface that anyone can master quickly"
+        />
       </div>
-    </main>
+    </div>
+  );
+}
+
+function FeatureCard({ title, icon, description }) {
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+      <div className="text-3xl mb-3">{icon}</div>
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-gray-600">{description}</p>
+    </div>
   );
 }

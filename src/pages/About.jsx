@@ -1,6 +1,6 @@
 export default function About() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-purple-50 to-white dark:from-zinc-900 dark:to-zinc-950 py-16 px-6">
+    <main className="min-h-screen  py-16 px-6">
       <div className="max-w-3xl mx-auto bg-white dark:bg-zinc-900 rounded-xl shadow-md p-8">
         <h1 className="text-3xl font-bold text-purple-700 dark:text-purple-400 mb-4">
           About SmartNotes
